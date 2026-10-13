@@ -46,7 +46,7 @@ const itemVariants = {
 };
 
 function App() {
-  // Récupération des tâches sauvegardées
+
   const [tasks, setTasks] = useState(() => {
     try {
       const savedTasks = localStorage.getItem("todo-tasks");
@@ -56,7 +56,6 @@ function App() {
     }
   });
 
-  // Récupération du prochain identifiant disponible
   const [nextId, setNextId] = useState(() => {
     try {
       const savedTasks = localStorage.getItem("todo-tasks");
@@ -72,12 +71,10 @@ function App() {
 
   const [activeFilter, setActiveFilter] = useState("Toutes");
 
-  // Sauvegarde automatique des tâches
   useEffect(() => {
     localStorage.setItem("todo-tasks", JSON.stringify(tasks));
   }, [tasks]);
 
-  // Ajouter une tâche
   const addTask = (taskName) => {
     if (taskName.trim() !== "") {
       const newTask = {
@@ -91,7 +88,6 @@ function App() {
     }
   };
 
-  // Modifier une tâche
   const editTask = (taskId, newName) => {
     setTasks((prevTasks) =>
       prevTasks.map((task) =>
@@ -100,7 +96,6 @@ function App() {
     );
   };
 
-  // Marquer une tâche comme terminée ou à faire
   const toggleTask = (taskId) => {
     setTasks((prevTasks) =>
       prevTasks.map((task) =>
@@ -109,12 +104,10 @@ function App() {
     );
   };
 
-  // Supprimer une tâche
   const deleteTask = (taskId) => {
     setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
   };
 
-  // Filtrer les tâches
   const filteredTasks = tasks.filter((task) => {
     if (activeFilter === "À faire") {
       return !task.completed;
