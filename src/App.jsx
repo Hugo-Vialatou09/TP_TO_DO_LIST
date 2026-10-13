@@ -1,15 +1,10 @@
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence, LayoutGroup } from "motion/react";
 
-import { useState, useEffect } from 'react';
-import {
-  motion,
-  AnimatePresence,
-  LayoutGroup,
-} from 'motion/react';
-
-import AddTask from './components/AddTask';
-import Filters from './components/Filters';
-import EditTask from './components/EditTask';
-import DeleteTask from './components/DeleteTask';
+import AddTask from "./components/AddTask";
+import Filters from "./components/Filters";
+import EditTask from "./components/EditTask";
+import DeleteTask from "./components/DeleteTask";
 
 const containerVariants = {
   hidden: {},
@@ -25,15 +20,15 @@ const itemVariants = {
     opacity: 0,
     y: 25,
     scale: 0.96,
-    filter: 'blur(8px)',
+    filter: "blur(8px)",
   },
   visible: {
     opacity: 1,
     y: 0,
     scale: 1,
-    filter: 'blur(0px)',
+    filter: "blur(0px)",
     transition: {
-      type: 'spring',
+      type: "spring",
       stiffness: 140,
       damping: 18,
     },
@@ -42,10 +37,10 @@ const itemVariants = {
     opacity: 0,
     x: 50,
     scale: 0.92,
-    filter: 'blur(6px)',
+    filter: "blur(6px)",
     transition: {
       duration: 0.25,
-      ease: 'easeInOut',
+      ease: "easeInOut",
     },
   },
 };
@@ -54,7 +49,7 @@ function App() {
   // Récupération des tâches sauvegardées
   const [tasks, setTasks] = useState(() => {
     try {
-      const savedTasks = localStorage.getItem('todo-tasks');
+      const savedTasks = localStorage.getItem("todo-tasks");
       return savedTasks ? JSON.parse(savedTasks) : [];
     } catch {
       return [];
@@ -64,30 +59,27 @@ function App() {
   // Récupération du prochain identifiant disponible
   const [nextId, setNextId] = useState(() => {
     try {
-      const savedTasks = localStorage.getItem('todo-tasks');
-      const parsedTasks = savedTasks
-        ? JSON.parse(savedTasks)
-        : [];
+      const savedTasks = localStorage.getItem("todo-tasks");
+      const parsedTasks = savedTasks ? JSON.parse(savedTasks) : [];
 
-      return parsedTasks.reduce(
-        (maxId, task) => Math.max(maxId, task.id),
-        0
-      ) + 1;
+      return (
+        parsedTasks.reduce((maxId, task) => Math.max(maxId, task.id), 0) + 1
+      );
     } catch {
       return 1;
     }
   });
 
-  const [activeFilter, setActiveFilter] = useState('Toutes');
+  const [activeFilter, setActiveFilter] = useState("Toutes");
 
   // Sauvegarde automatique à chaque modification des tâches
   useEffect(() => {
-    localStorage.setItem('todo-tasks', JSON.stringify(tasks));
+    localStorage.setItem("todo-tasks", JSON.stringify(tasks));
   }, [tasks]);
 
   // Ajouter une tâche
   const addTask = (taskName) => {
-    if (taskName.trim() !== '') {
+    if (taskName.trim() !== "") {
       const newTask = {
         id: nextId,
         name: taskName.trim(),
@@ -103,10 +95,8 @@ function App() {
   const editTask = (taskId, newName) => {
     setTasks((prevTasks) =>
       prevTasks.map((task) =>
-        task.id === taskId
-          ? { ...task, name: newName }
-          : task
-      )
+        task.id === taskId ? { ...task, name: newName } : task,
+      ),
     );
   };
 
@@ -114,27 +104,23 @@ function App() {
   const toggleTask = (taskId) => {
     setTasks((prevTasks) =>
       prevTasks.map((task) =>
-        task.id === taskId
-          ? { ...task, completed: !task.completed }
-          : task
-      )
+        task.id === taskId ? { ...task, completed: !task.completed } : task,
+      ),
     );
   };
 
   // Supprimer une tâche
   const deleteTask = (taskId) => {
-    setTasks((prevTasks) =>
-      prevTasks.filter((task) => task.id !== taskId)
-    );
+    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
   };
 
   // Filtrer les tâches
   const filteredTasks = tasks.filter((task) => {
-    if (activeFilter === 'À faire') {
+    if (activeFilter === "À faire") {
       return !task.completed;
     }
 
-    if (activeFilter === 'Fait') {
+    if (activeFilter === "Fait") {
       return task.completed;
     }
 
@@ -146,19 +132,16 @@ function App() {
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="flex min-h-screen flex-col bg-black pl-5 pt-10 sm:pl-10 sm:pt-14 md:pl-20 md:pt-20"
+      className="flex min-h-screen flex-col bg-black pt-10 pl-5 sm:pt-14 sm:pl-10 md:pt-20 md:pl-20"
     >
       {/* HEADER ANIMÉ */}
-      <motion.header
-        variants={itemVariants}
-        className="mb-5"
-      >
+      <motion.header variants={itemVariants} className="mb-5">
         <motion.h1
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{
             duration: 0.7,
-            ease: 'easeOut',
+            ease: "easeOut",
           }}
           className="text-3xl font-bold text-white"
         >
@@ -177,7 +160,7 @@ function App() {
         {/* INDICATEUR DE PROGRESSION */}
         <motion.div
           initial={{ opacity: 0, width: 0 }}
-          animate={{ opacity: 1, width: '100%' }}
+          animate={{ opacity: 1, width: "100%" }}
           transition={{ delay: 0.4, duration: 0.8 }}
           className="mt-4 h-1 max-w-4xl overflow-hidden rounded-full bg-[#2A2A2A]"
         >
@@ -193,7 +176,7 @@ function App() {
               }%`,
             }}
             transition={{
-              type: 'spring',
+              type: "spring",
               stiffness: 100,
               damping: 20,
             }}
@@ -206,7 +189,8 @@ function App() {
           animate={{ opacity: 1, y: 0 }}
           className="mt-2 text-sm text-gray-500"
         >
-          {tasks.filter((task) => task.completed).length} / {tasks.length} tâches terminées
+          {tasks.filter((task) => task.completed).length} / {tasks.length}{" "}
+          tâches terminées
         </motion.p>
       </motion.header>
 
@@ -214,16 +198,13 @@ function App() {
       <motion.section
         variants={itemVariants}
         whileHover={{ y: -2 }}
-        transition={{ type: 'spring', stiffness: 300 }}
+        transition={{ type: "spring", stiffness: 300 }}
       >
         <AddTask onAddTask={addTask} />
       </motion.section>
 
       {/* FILTRES */}
-      <motion.section
-        variants={itemVariants}
-        className="max-w-6xl"
-      >
+      <motion.section variants={itemVariants} className="max-w-6xl">
         <Filters
           activeFilter={activeFilter}
           onFilterChange={setActiveFilter}
@@ -233,10 +214,7 @@ function App() {
 
       {/* LISTE ANIMÉE */}
       <LayoutGroup>
-        <motion.div
-          layout
-          className="mt-6 max-w-4xl space-y-4 pb-10"
-        >
+        <motion.div layout className="mt-6 max-w-4xl space-y-4 pb-10">
           <AnimatePresence mode="popLayout" initial={false}>
             {filteredTasks.map((task, index) => (
               <motion.div
@@ -248,15 +226,15 @@ function App() {
                 exit="exit"
                 transition={{
                   layout: {
-                    type: 'spring',
+                    type: "spring",
                     stiffness: 350,
                     damping: 30,
                   },
                 }}
                 whileHover={{
                   scale: 1.015,
-                  borderColor: '#76b900',
-                  backgroundColor: '#303030',
+                  borderColor: "#76b900",
+                  backgroundColor: "#303030",
                   transition: { duration: 0.2 },
                 }}
                 whileTap={{ scale: 0.99 }}
@@ -286,10 +264,10 @@ function App() {
                     <motion.span
                       layout
                       animate={{
-                        color: task.completed ? '#9ca3af' : '#ffffff',
+                        color: task.completed ? "#9ca3af" : "#ffffff",
                       }}
                       className={`block break-words ${
-                        task.completed ? 'line-through' : ''
+                        task.completed ? "line-through" : ""
                       }`}
                     >
                       {task.name}
@@ -299,7 +277,7 @@ function App() {
                       {task.completed && (
                         <motion.span
                           initial={{ opacity: 0, height: 0, y: -5 }}
-                          animate={{ opacity: 1, height: 'auto', y: 0 }}
+                          animate={{ opacity: 1, height: "auto", y: 0 }}
                           exit={{ opacity: 0, height: 0, y: -5 }}
                           className="block overflow-hidden text-xs text-[#76b900]"
                         >
@@ -322,20 +300,14 @@ function App() {
                     whileHover={{ scale: 1.12, rotate: -3 }}
                     whileTap={{ scale: 0.9 }}
                   >
-                    <EditTask
-                      task={task}
-                      onEdit={editTask}
-                    />
+                    <EditTask task={task} onEdit={editTask} />
                   </motion.div>
 
                   <motion.div
                     whileHover={{ scale: 1.12, rotate: 3 }}
                     whileTap={{ scale: 0.85 }}
                   >
-                    <DeleteTask
-                      taskId={task.id}
-                      onDelete={deleteTask}
-                    />
+                    <DeleteTask taskId={task.id} onDelete={deleteTask} />
                   </motion.div>
                 </motion.div>
               </motion.div>
@@ -351,7 +323,7 @@ function App() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: -10 }}
                 transition={{
-                  type: 'spring',
+                  type: "spring",
                   stiffness: 180,
                   damping: 20,
                 }}
@@ -365,11 +337,11 @@ function App() {
                   transition={{
                     duration: 2.5,
                     repeat: Infinity,
-                    ease: 'easeInOut',
+                    ease: "easeInOut",
                   }}
                   className="mb-4 text-4xl"
                 >
-                  {activeFilter === 'Fait' ? '✓' : '✦'}
+                  {activeFilter === "Fait" ? "✓" : "✦"}
                 </motion.div>
 
                 <motion.p
@@ -378,17 +350,17 @@ function App() {
                   transition={{ delay: 0.15 }}
                   className="text-lg font-semibold text-white"
                 >
-                  {activeFilter === 'Fait'
-                    ? 'Aucune tâche terminée'
-                    : activeFilter === 'À faire'
-                      ? 'Tout est à jour !'
-                      : 'Aucune tâche pour le moment'}
+                  {activeFilter === "Fait"
+                    ? "Aucune tâche terminée"
+                    : activeFilter === "À faire"
+                      ? "Tout est à jour !"
+                      : "Aucune tâche pour le moment"}
                 </motion.p>
 
                 <p className="mt-2 text-sm text-gray-500">
-                  {activeFilter === 'À faire'
-                    ? 'Tu peux profiter de cette petite victoire.'
-                    : 'Ajoute une tâche pour commencer.'}
+                  {activeFilter === "À faire"
+                    ? "Tu peux profiter de cette petite victoire."
+                    : "Ajoute une tâche pour commencer."}
                 </p>
               </motion.div>
             )}
