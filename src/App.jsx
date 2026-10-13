@@ -1,4 +1,5 @@
-import { useState } from 'react';
+
+import { useState, useEffect } from 'react';
 import {
   motion,
   AnimatePresence,
@@ -50,10 +51,41 @@ const itemVariants = {
 };
 
 function App() {
-  const [tasks, setTasks] = useState([]);
-  const [nextId, setNextId] = useState(1);
+  // Récupération des tâches sauvegardées
+  const [tasks, setTasks] = useState(() => {
+    try {
+      const savedTasks = localStorage.getItem('todo-tasks');
+      return savedTasks ? JSON.parse(savedTasks) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  // Récupération du prochain identifiant disponible
+  const [nextId, setNextId] = useState(() => {
+    try {
+      const savedTasks = localStorage.getItem('todo-tasks');
+      const parsedTasks = savedTasks
+        ? JSON.parse(savedTasks)
+        : [];
+
+      return parsedTasks.reduce(
+        (maxId, task) => Math.max(maxId, task.id),
+        0
+      ) + 1;
+    } catch {
+      return 1;
+    }
+  });
+
   const [activeFilter, setActiveFilter] = useState('Toutes');
 
+  // Sauvegarde automatique à chaque modification des tâches
+  useEffect(() => {
+    localStorage.setItem('todo-tasks', JSON.stringify(tasks));
+  }, [tasks]);
+
+  // Ajouter une tâche
   const addTask = (taskName) => {
     if (taskName.trim() !== '') {
       const newTask = {
@@ -67,6 +99,7 @@ function App() {
     }
   };
 
+  // Modifier une tâche
   const editTask = (taskId, newName) => {
     setTasks((prevTasks) =>
       prevTasks.map((task) =>
@@ -77,6 +110,7 @@ function App() {
     );
   };
 
+  // Marquer une tâche comme terminée ou à faire
   const toggleTask = (taskId) => {
     setTasks((prevTasks) =>
       prevTasks.map((task) =>
@@ -87,12 +121,14 @@ function App() {
     );
   };
 
+  // Supprimer une tâche
   const deleteTask = (taskId) => {
     setTasks((prevTasks) =>
       prevTasks.filter((task) => task.id !== taskId)
     );
   };
 
+  // Filtrer les tâches
   const filteredTasks = tasks.filter((task) => {
     if (activeFilter === 'À faire') {
       return !task.completed;
@@ -138,7 +174,7 @@ function App() {
           Une chose à la fois. Faites place à l'essentiel.
         </motion.p>
 
-        {/* PETIT INDICATEUR DE PROGRESSION */}
+        {/* INDICATEUR DE PROGRESSION */}
         <motion.div
           initial={{ opacity: 0, width: 0 }}
           animate={{ opacity: 1, width: '100%' }}
