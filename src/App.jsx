@@ -72,7 +72,7 @@ function App() {
 
   const [activeFilter, setActiveFilter] = useState("Toutes");
 
-  // Sauvegarde automatique à chaque modification des tâches
+  // Sauvegarde automatique des tâches
   useEffect(() => {
     localStorage.setItem("todo-tasks", JSON.stringify(tasks));
   }, [tasks]);
@@ -232,14 +232,12 @@ function App() {
                   },
                 }}
                 whileHover={{
-                  scale: 1.015,
                   borderColor: "#76b900",
                   backgroundColor: "#303030",
                   transition: { duration: 0.2 },
                 }}
                 whileTap={{ scale: 0.99 }}
                 className="flex items-center justify-between gap-3 rounded-sm border border-gray-500 bg-[#2A2A2A] p-4 text-white"
-                style={{ originX: 0.5 }}
               >
                 {/* CHECKBOX + NOM */}
                 <div className="flex min-w-0 items-center gap-3">
@@ -262,7 +260,6 @@ function App() {
 
                   <div className="min-w-0">
                     <motion.span
-                      layout
                       animate={{
                         color: task.completed ? "#9ca3af" : "#ffffff",
                       }}
@@ -290,21 +287,20 @@ function App() {
 
                 {/* ACTIONS */}
                 <motion.div
-                  layout
                   className="flex shrink-0 items-center gap-3"
                   initial={{ opacity: 0, x: 10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: Math.min(index * 0.04, 0.2) }}
                 >
                   <motion.div
-                    whileHover={{ scale: 1.12, rotate: -3 }}
+                    whileHover={{ scale: 1 }}
                     whileTap={{ scale: 0.9 }}
                   >
                     <EditTask task={task} onEdit={editTask} />
                   </motion.div>
 
                   <motion.div
-                    whileHover={{ scale: 1.12, rotate: 3 }}
+                    whileHover={{ scale: 1.12 }}
                     whileTap={{ scale: 0.85 }}
                   >
                     <DeleteTask taskId={task.id} onDelete={deleteTask} />
